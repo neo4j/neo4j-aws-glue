@@ -26,4 +26,4 @@ jobs:
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v4
         with:
-          path: target/aws-glue-*.jar
+          path: target/neo4j-aws-glue-*.jar
