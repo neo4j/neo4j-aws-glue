@@ -1,12 +1,13 @@
 name: build
 
 on:
-  push:
-    branches:
-      - main
+  create:
+    tags:
+      - '*'
 
 jobs:
-  build:
+  build_artifact:
+    if: (github.event_name == 'create' && github.event.ref_type == 'tag')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,3 +23,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
       - name: Clean and verify
         run: ./mvnw -q clean verify
+      - name: 'Upload build artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          path: target/aws-glue-*.jar
