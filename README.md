@@ -84,6 +84,36 @@ With this in place, the export will run as expected and create the nodes.
 
 ![](docs/9.jpg)
 
+### Debugging errors
+
+Most problems can be seen already in the visual ETL flow when AWS Glue tries to render the data preview.
+At least when running a job, the overview will report the stacktrace with the messages below, if a failure occurs.
+
+Here are some common error scenarios and how to solve them.
+
+#### Credentials or URI wrong
+
+The message
+>Glue ETL Marketplace: failed to retrieve table schema from source.driverClassName:
+>org.neo4j.jdbc.Neo4jDriver, error message: org.neo4j.jdbc.internal.shaded.bolt.exception.BoltServiceUnavailableException:
+>Unable to connect to <Neo4j instance URI>, ensure the database is running and that there is a working network connection to it. 
+
+usually means that there is something wrong with the initial connection to the database.
+
+This could be either wrong / unsufficient credentials or the wrong URI pointing to the instance.
+The URI and parameters on the connection page should be checked again and fixed.
+(see section _Creating a connection_)
+
+#### Target schema missing
+
+> Glue ETL Marketplace: table does not exist.
+
+This message indicates that there is no label yet in the database with the target "table name".
+
+> Glue ETL Marketplace: JDBC Data Sink: Column "<property name>" not found in schema Some(...)...
+
+Not only the labels have to exist but also the properties on the target nodes.
+(see section _Writing to non-existent labels / properties_)
 
 ### A note on relationships
 
