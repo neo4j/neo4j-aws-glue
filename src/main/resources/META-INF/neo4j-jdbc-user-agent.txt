@@ -1,1 +1,1 @@
-aws-glue-connector/1.0.1-SNAPSHOT
+neo4j-aws-glue-connector/1.0.1-SNAPSHOT
