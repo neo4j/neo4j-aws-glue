@@ -57,6 +57,12 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -156,6 +162,13 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Implementation-Version>${neo4j-jdbc.version}</Implementation-Version>
+                                        <Artifact-Id>neo4j-jdbc</Artifact-Id>
+                                    </manifestEntries>
+                                </transformer>
                             </transformers>
                             <filters>
                                 <filter>
