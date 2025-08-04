@@ -125,5 +125,5 @@ For this, a custom write query would have to be written in Glue which seems not 
 
 As mentioned in the introduction, this module does not contain much but only adds another Neo4j JDBC driver translator to the classpath.
 Then it repackages the Neo4j JDBC driver with this translator.
-To build this component, use `mvn clean package`.
+To build this component, use `./mvnw clean package`.
 This will result in a `neo4j-aws-glue-<version>.jar` that can be used as the driver jar for AWS Glue.
