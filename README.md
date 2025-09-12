@@ -1,7 +1,7 @@
 > [!IMPORTANT]  
 > Even though this repository is public and has a released binary, the process of official support is not in place yet.
 
-# Neo4j JDBC Driver for AWS Glue
+# Neo4j Connector for AWS Glue
 
 ## Preface
 
