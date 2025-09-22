@@ -32,7 +32,7 @@ class Maven(
 
       artifactRules =
         """
-        +:target/neo4j-aws-glue* => artifacts
+        +:target/neo4j-aws-glue*jar
         """
             .trimIndent()
     })
