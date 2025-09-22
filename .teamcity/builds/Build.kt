@@ -27,7 +27,7 @@ class Build(
             Maven(
                 "${name}-build",
                 "build",
-                "sortpom:verify license:check spotless:check compile",
+                "verify",
                 javaVersion = DEFAULT_JAVA_VERSION,
             ))
 
