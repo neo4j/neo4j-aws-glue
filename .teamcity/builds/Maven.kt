@@ -29,4 +29,10 @@ class Maven(
       requirements { runOnLinux(size) }
 
       this.init()
+
+      artifactRules =
+        """
+        +:artifacts => artifacts
+        """
+            .trimIndent()
     })

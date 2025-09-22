@@ -27,7 +27,7 @@ class Build(
             Maven(
                 "${name}-build",
                 "build",
-                "verify",
+                "package",
                 javaVersion = DEFAULT_JAVA_VERSION,
             ))
 

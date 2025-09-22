@@ -45,19 +45,6 @@ class Release(id: String, name: String) :
                 unchecked = "false",
             )
 
-            password("env.JRELEASER_GITHUB_TOKEN", "%github-pull-request-token%")
-
-            text("env.JRELEASER_DRY_RUN", "%$DRY_RUN%")
-            text("env.JRELEASER_PROJECT_VERSION", "%releaseVersion%")
-
-            text("env.JRELEASER_ANNOUNCE_SLACK_ACTIVE", "NEVER")
-            text("env.JRELEASER_ANNOUNCE_SLACK_TOKEN", "%slack-token%")
-            text("env.JRELEASER_ANNOUNCE_SLACK_WEBHOOK", "%slack-webhook%")
-
-            password("env.JRELEASER_GPG_PASSPHRASE", "%signing-key-passphrase%")
-
-            text("env.JRELEASER_MAVENCENTRAL_USERNAME", "%publish-username%")
-            password("env.JRELEASER_MAVENCENTRAL_TOKEN", "%publish-password%")
           }
 
           steps {
@@ -68,44 +55,6 @@ class Release(id: String, name: String) :
                 "build: release version %releaseVersion%",
                 dryRunParameter = DRY_RUN,
             )
-
-            script {
-              scriptContent =
-                  """
-                #!/bin/bash
-                
-                set -eux
-                
-                apt-get update
-                apt-get install -o Acquire::Retries=10 --yes build-essential curl git unzip zip
-                
-                # Get the jreleaser downloader
-                curl -sL https://raw.githubusercontent.com/jreleaser/release-action/refs/tags/2.4.2/get_jreleaser.java > get_jreleaser.java
-
-                # Download JReleaser with version = 1.18.0
-                java get_jreleaser.java 1.18.0
-
-                if [ "%dry-run%" = "true" ]; then
-                  echo "we are on a dry run, only performing upload to maven central"
-                  export JRELEASER_MAVENCENTRAL_STAGE=UPLOAD
-                  export JRELEASER_ANNOUNCE_SLACK_ACTIVE=NEVER
-                else
-                  echo "we will do a full deploy to maven central"
-                  export JRELEASER_MAVENCENTRAL_STAGE=FULL
-                  export JRELEASER_ANNOUNCE_SLACK_ACTIVE=ALWAYS
-                fi
-                
-                # Execute JReleaser
-                java -jar jreleaser-cli.jar assemble
-                java -jar jreleaser-cli.jar full-release
-              """
-                      .trimIndent()
-
-              dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-              dockerImage = "eclipse-temurin:11-jdk"
-              dockerRunParameters =
-                  "--volume /var/run/docker.sock:/var/run/docker.sock --volume %teamcity.build.checkoutDir%/signingkeysandbox:/root/.gnupg"
-            }
 
             setVersion("Set next snapshot version", "%nextSnapshotVersion%")
 
