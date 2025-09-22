@@ -40,7 +40,7 @@ class Build(
         it.thisVcs()
 
         it.features {
-          enableCommitStatusPublisher()
+//          enableCommitStatusPublisher()
           if (forPullRequests) enablePullRequests()
         }
 
