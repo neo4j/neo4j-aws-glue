@@ -22,6 +22,7 @@ class Maven(
           this.goals = goals
           this.runnerArgs = "$MAVEN_DEFAULT_ARGS ${args ?: ""}"
         }
+        sha256("sha256 sum")
       }
 
       features { dockerSupport {} }
