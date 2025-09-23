@@ -34,7 +34,7 @@ class Maven(
       artifactRules =
         """
         +:target/neo4j-aws-glue*jar
-        +:sha256.txt
+        +:neo4j-aws-glue*.sha256
         """
             .trimIndent()
     })

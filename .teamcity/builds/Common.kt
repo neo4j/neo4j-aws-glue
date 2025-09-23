@@ -84,9 +84,10 @@ fun BuildSteps.sha256(
         this.name = name
         scriptContent =
             """
-          #!/bin/bash -eu              
-          sha256sum target/neo4j-aws-glue*jar > sha256.txt
-        """
+            #!/bin/bash -eu
+            FILE_NAME=$(ls target/neo4j-aws-glue*jar)
+            sha256sum ${'$'}FILE_NAME | awk -F' ' '{print $1}' > ${'$'}FILE_NAME.sha256
+            """
                 .trimIndent()
     }
 }
