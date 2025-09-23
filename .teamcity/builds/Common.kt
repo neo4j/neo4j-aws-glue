@@ -77,6 +77,21 @@ fun BuildSteps.runMaven(
   return maven
 }
 
+fun BuildSteps.sha256(
+    name: String
+): ScriptBuildStep {
+    return this.script {
+        this.name = name
+        scriptContent =
+            """
+          #!/bin/bash -eu              
+         
+          sha256 target/neo4j-aws-glue*jar > sha256.txt
+        """
+                .trimIndent()
+    }
+}
+
 fun BuildSteps.setVersion(name: String, version: String): MavenBuildStep {
   return this.runMaven {
     this.name = name
