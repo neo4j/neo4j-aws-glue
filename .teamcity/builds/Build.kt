@@ -18,13 +18,18 @@ class Build(
 
       val bts = sequential {
 
-        dependentBuildType(
-            VerifyMavenBuild(
-                "${name}-build",
-                "build",
-                "verify",
-                javaVersion = DEFAULT_JAVA_VERSION,
-            ))
+          dependentBuildType(
+              VerifyMavenBuild(
+                  "${name}-build",
+                  "build",
+                  "verify",
+                  javaVersion = DEFAULT_JAVA_VERSION,
+              )
+          )
+
+          dependentBuildType(complete)
+
+          dependentBuildType(Release("${name}-release", "release"))
       }
 
       bts.buildTypes().forEach {
