@@ -3,8 +3,9 @@ package builds
 import jetbrains.buildServer.configs.kotlin.BuildType
 import jetbrains.buildServer.configs.kotlin.buildFeatures.dockerSupport
 import jetbrains.buildServer.configs.kotlin.toId
+import sun.tools.jar.resources.jar
 
-class Maven(
+class VerifyMavenBuild(
     id: String,
     name: String,
     goals: String,
@@ -22,7 +23,6 @@ class Maven(
           this.goals = goals
           this.runnerArgs = "$MAVEN_DEFAULT_ARGS ${args ?: ""}"
         }
-        sha256("sha256 sum")
       }
 
       features { dockerSupport {} }
@@ -31,10 +31,4 @@ class Maven(
 
       this.init()
 
-      artifactRules =
-        """
-        +:target/neo4j-aws-glue*jar
-        +:target/neo4j-aws-glue*.sha256
-        """
-            .trimIndent()
     })

@@ -1,7 +1,6 @@
 package builds
 
 import jetbrains.buildServer.configs.kotlin.Project
-import jetbrains.buildServer.configs.kotlin.StageFactory.sequential
 import jetbrains.buildServer.configs.kotlin.sequential
 import jetbrains.buildServer.configs.kotlin.toId
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
@@ -9,7 +8,6 @@ import jetbrains.buildServer.configs.kotlin.triggers.vcs
 class Build(
     name: String,
     branchFilter: String,
-    forPullRequests: Boolean,
     triggerRules: String? = null
 ) :
     Project({
@@ -19,30 +17,18 @@ class Build(
       val complete = Empty("${name}-complete", "complete")
 
       val bts = sequential {
-        if (forPullRequests)
-            buildType(WhiteListCheck("${name}-whitelist-check", "white-list check"))
-        if (forPullRequests) dependentBuildType(PRCheck("${name}-pr-check", "pr check"))
 
         dependentBuildType(
-            Maven(
+            VerifyMavenBuild(
                 "${name}-build",
                 "build",
-                "package",
+                "verify",
                 javaVersion = DEFAULT_JAVA_VERSION,
             ))
-
-        dependentBuildType(complete)
-        if (!forPullRequests)
-            collectArtifacts(dependentBuildType(Release("${name}-release", "release")))
       }
 
       bts.buildTypes().forEach {
         it.thisVcs()
-
-        it.features {
-//          enableCommitStatusPublisher()
-          if (forPullRequests) enablePullRequests()
-        }
 
         buildType(it)
       }

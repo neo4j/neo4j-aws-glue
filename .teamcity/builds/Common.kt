@@ -30,37 +30,11 @@ fun BuildType.thisVcs() = vcs {
   cleanCheckout = true
 }
 
-fun BuildFeatures.enableCommitStatusPublisher() = commitStatusPublisher {
-  vcsRootExtId = DslContext.settingsRoot.id.toString()
-  publisher = github {
-    githubUrl = "https://api.github.com"
-    authType = personalToken { token = "%github-commit-status-token%" }
-  }
-}
-
-fun BuildFeatures.enablePullRequests() = pullRequests {
-  vcsRootExtId = DslContext.settingsRoot.id.toString()
-  provider = github {
-    authType = token { token = "%github-pull-request-token%" }
-    filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-  }
-}
-
 fun CompoundStage.dependentBuildType(bt: BuildType) =
     buildType(bt) {
       onDependencyCancel = FailureAction.CANCEL
       onDependencyFailure = FailureAction.FAIL_TO_START
     }
-
-fun collectArtifacts(buildType: BuildType): BuildType {
-  buildType.artifactRules =
-      """
-        +:target/staging-deploy => packages
-    """
-          .trimIndent()
-
-  return buildType
-}
 
 fun BuildSteps.runMaven(
     javaVersion: String = DEFAULT_JAVA_VERSION,
@@ -100,11 +74,18 @@ fun BuildSteps.setVersion(name: String, version: String): MavenBuildStep {
   }
 }
 
+fun BuildSteps.mavenPackage(name: String): MavenBuildStep {
+    return this.runMaven {
+        this.name = name
+        goals = "package"
+        runnerArgs = MAVEN_DEFAULT_ARGS
+    }
+}
+
 fun BuildSteps.commitAndPush(
     name: String,
     commitMessage: String,
     includeFiles: String = "\\*pom.xml",
-    dryRunParameter: String = "dry-run"
 ): ScriptBuildStep {
   return this.script {
     this.name = name
@@ -118,6 +99,5 @@ fun BuildSteps.commitAndPush(
         """
             .trimIndent()
 
-    conditions { doesNotMatch(dryRunParameter, "true") }
   }
 }
