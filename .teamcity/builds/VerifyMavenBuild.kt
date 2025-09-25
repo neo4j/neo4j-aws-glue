@@ -3,7 +3,6 @@ package builds
 import jetbrains.buildServer.configs.kotlin.BuildType
 import jetbrains.buildServer.configs.kotlin.buildFeatures.dockerSupport
 import jetbrains.buildServer.configs.kotlin.toId
-import sun.tools.jar.resources.jar
 
 class VerifyMavenBuild(
     id: String,
