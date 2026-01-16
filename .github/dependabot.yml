@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: "/"
+    registries: "*"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 10
