@@ -50,7 +50,3 @@ jobs:
       - name: Semgrep scan
         run: |
           semgrep ci --no-git-ignore        
-          
-          
-  
-          
