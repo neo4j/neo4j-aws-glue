@@ -26,7 +26,6 @@ class Release(id: String, name: String) :
                 display = ParameterDisplay.PROMPT,
                 allowEmpty = false,
             )
-
           }
 
           steps {
@@ -48,11 +47,11 @@ class Release(id: String, name: String) :
           }
 
           artifactRules =
-                """
+              """
                 +:target/neo4j-aws-glue*jar
                 +:target/neo4j-aws-glue*.sha256
                 """
-                    .trimIndent()
+                  .trimIndent()
 
           requirements { runOnLinux(LinuxSize.SMALL) }
         },

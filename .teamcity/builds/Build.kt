@@ -5,11 +5,7 @@ import jetbrains.buildServer.configs.kotlin.sequential
 import jetbrains.buildServer.configs.kotlin.toId
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
 
-class Build(
-    name: String,
-    branchFilter: String,
-    triggerRules: String? = null
-) :
+class Build(name: String, branchFilter: String, triggerRules: String? = null) :
     Project({
       this.id(name.toId())
       this.name = name
@@ -17,23 +13,23 @@ class Build(
       val complete = Empty("${name}-complete", "complete")
 
       val bts = sequential {
+        dependentBuildType(
+            VerifyMavenBuild(
+                "${name}-build",
+                "build",
+                "verify",
+                javaVersion = DEFAULT_JAVA_VERSION,
+            ))
 
-          dependentBuildType(
-              VerifyMavenBuild(
-                  "${name}-build",
-                  "build",
-                  "verify",
-                  javaVersion = DEFAULT_JAVA_VERSION,
-              )
-          )
+        dependentBuildType(complete)
 
-          dependentBuildType(complete)
-
-          dependentBuildType(Release("${name}-release", "release"))
+        dependentBuildType(Release("${name}-release", "release"))
       }
 
       bts.buildTypes().forEach {
         it.thisVcs()
+
+        it.features { loginToECR() }
 
         buildType(it)
       }
