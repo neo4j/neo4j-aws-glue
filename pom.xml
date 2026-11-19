@@ -33,6 +33,8 @@
         <junit.version>6.1.3</junit.version>
         <license-maven-plugin.version>5.1.2</license-maven-plugin.version>
         <license.id>neo4j_apache_v2</license.id>
+        <licensing-maven-plugin.version>1.7.12</licensing-maven-plugin.version>
+        <licensing.prepend.text>/license/neo4j_apache_v2/notice.txt</licensing.prepend.text>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
@@ -319,6 +321,46 @@
                             <goal>check</goal>
                         </goals>
                         <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.neo4j.build.plugins</groupId>
+                <artifactId>licensing-maven-plugin</artifactId>
+                <version>${licensing-maven-plugin.version}</version>
+                <configuration>
+                    <failIfDisliked>true</failIfDisliked>
+                    <failIfMissing>true</failIfMissing>
+                    <plainTextReport>true</plainTextReport>
+                    <prependText>${licensing.prepend.text}</prependText>
+                    <excludedGroups>^org\.neo4j$</excludedGroups>
+                    <includedScopes>compile,runtime</includedScopes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.neo4j.build</groupId>
+                        <artifactId>resources</artifactId>
+                        <version>${build-resources.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>list-all-licenses</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <licensingRequirementFiles>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <licensingRequirementFile>licensing/licensing-requirements-base.xml</licensingRequirementFile>
+                            </licensingRequirementFiles>
+                            <thirdPartyLicensingFilename>${project.artifactId}-${project.version}-NOTICE.txt</thirdPartyLicensingFilename>
+                            <checkExistingNoticeFile>${project.build.directory}/../NOTICE.txt</checkExistingNoticeFile>
+                            <listPrependText>/licensing/list-prefix.txt</listPrependText>
+                            <listReport>${project.artifactId}-${project.version}-LICENSES.txt</listReport>
+                            <checkExistingLicensesFile>${project.build.directory}/../LICENSES.txt</checkExistingLicensesFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
