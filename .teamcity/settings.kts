@@ -1,11 +1,16 @@
 import builds.Build
+import builds.NightlyBuild
 import jetbrains.buildServer.configs.kotlin.project
 import jetbrains.buildServer.configs.kotlin.version
 
 version = "2025.11"
 
 project {
-  params { password("github-commit-status-token", "%github-token%") }
+  params {
+    password("github-commit-status-token", "%github-token%")
+    password("github-pull-request-token", "%github-token%")
+    password("semgrep-app-token", "%semgrep-token%")
+  }
 
   subProject(
       Build(
@@ -20,5 +25,16 @@ project {
                 -:comment=^build.*release version.*:**
                 -:comment=^build.*update version.*:**
               """
-                  .trimIndent()))
+                  .trimIndent(),
+          forPullRequests = false))
+  subProject(
+      Build(
+          name = "pull-request",
+          branchFilter =
+              """
+                    +:pull/*
+                """
+                  .trimIndent(),
+          forPullRequests = true))
+  subProject(NightlyBuild("nightly"))
 }
