@@ -1,7 +1,10 @@
 package builds
 
 import jetbrains.buildServer.configs.kotlin.*
+import jetbrains.buildServer.configs.kotlin.buildFeatures.PullRequests
+import jetbrains.buildServer.configs.kotlin.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.buildFeatures.dockerRegistryConnections
+import jetbrains.buildServer.configs.kotlin.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.buildSteps.MavenBuildStep
 import jetbrains.buildServer.configs.kotlin.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.buildSteps.maven
@@ -9,7 +12,11 @@ import jetbrains.buildServer.configs.kotlin.buildSteps.script
 
 const val GITHUB_OWNER = "neo4j"
 const val GITHUB_REPOSITORY = "neo4j-aws-glue"
+const val FULL_GITHUB_REPOSITORY = "$GITHUB_OWNER/$GITHUB_REPOSITORY"
+const val GITHUB_URL = "https://github.com/$FULL_GITHUB_REPOSITORY"
 const val MAVEN_DEFAULT_ARGS = "--no-transfer-progress --batch-mode --show-version"
+
+const val SEMGREP_DOCKER_IMAGE = "%ecr-registry-connectors%:semgrep-latest"
 
 val DEFAULT_JAVA_VERSION = JavaVersion.V_17
 
@@ -40,6 +47,22 @@ fun BuildType.thisVcs() = vcs {
 fun BuildFeatures.loginToECR() = dockerRegistryConnections {
   cleanupPushedImages = true
   loginToRegistry = on { dockerRegistryId = DOCKER_REGISTRIES.joinToString(",") }
+}
+
+fun BuildFeatures.enableCommitStatusPublisher() = commitStatusPublisher {
+  vcsRootExtId = DslContext.settingsRoot.id.toString()
+  publisher = github {
+    githubUrl = "https://api.github.com"
+    authType = personalToken { token = "%github-commit-status-token%" }
+  }
+}
+
+fun BuildFeatures.enablePullRequests() = pullRequests {
+  vcsRootExtId = DslContext.settingsRoot.id.toString()
+  provider = github {
+    authType = token { token = "%github-pull-request-token%" }
+    filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+  }
 }
 
 fun CompoundStage.dependentBuildType(bt: BuildType) =
